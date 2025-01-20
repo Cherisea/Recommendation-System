@@ -22,3 +22,16 @@ An early technique of recommendation systems, CBF relies on attributes of items 
 - Calculate the pair-wise cosine similarity between all items in stock and the given item based on selected features;
 - Rank cosine similarity scores in descreasing order;
 - Return top n items;
+
+# Collaborative Filtering(CF) with ALS
+CF operates under the assumption that if two users have similar taste and one user likes an item that another hasn't interacted with yet, then it's highly likely that the other user will be interested in that item as well. This program focuses on one of the two types of CF -- model-based CF implemented with ALS matrix factorization algorithm, which enjoys two major advantages over the other type of CF -- memory-based CF:
+- Data sparsity: designed to tackle the practical challenge of sparse user-item interaction matrix, ALS predicts user ratings by tuning the number of latent factors that decompose a higher dimension matrix into two lower dimension matrix;
+- Scalability: unlike memory-based CF, ALS runs gradient descent across multiple partitions of underlying datasets from a cluster of machines;
+
+## Workflow
+- Launch a Spark sessin;
+- Initialize an ALSRecommender;
+- Tune ALS model via gridsearch or set ALS model hyperparameters;
+- Ask ALSRecommender to make recommendations based on user input;
+- Return top n items;
+- Terminate Spark;
