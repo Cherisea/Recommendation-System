@@ -1,17 +1,17 @@
 """
-    A program that implements Content-Based Filtering(CBF) using sklearn library
+    Implementation of Content-Based Filtering(CBF) using sklearn
 """
 
-# A library that turns a collection of documents into a matrix of TF-IDF features
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
 import pandas as pd
 import timeit
 
 
 def read_data(filepath):
     """
-        Function: read a csv file containing item information
+        Read a csv file containing item information
 
         filepath: path to a csv file
     """
@@ -24,10 +24,10 @@ def read_data(filepath):
 
 def compute_similarity(feature_col, title_idx):
     """
-        Function: calculate on-demand cosine similarity matrix for a given title
+        Calculate on-demand cosine similarity matrix for a given title
 
-        feature_col: an iterable containing the feature to use for vectorization
-        title_idx: index of a movie the user showed interest previously
+        feature_col: feature column
+        title_idx: index of a previously watched movie
     """
     vectorizer = TfidfVectorizer(stop_words='english')
     tfidf_matrix = vectorizer.fit_transform(feature_col)
@@ -42,7 +42,7 @@ def cbf_recommend(top_k: int, filepath: str, record: str, title_col: str, featur
     """
         Function: recommend top k titles based on user' watch records
 
-        top_k: number of recommendations to return
+        top_k: number of recommendations
         filepath: path to a csv file containing all data
         record: previous title a user has watched
         title_col: column name of movie titles in file
@@ -50,9 +50,9 @@ def cbf_recommend(top_k: int, filepath: str, record: str, title_col: str, featur
     data = read_data(filepath)
 
     # Get index of record
-    title_idx = data[data[title_col].str.lower(
-    ).str.contains(record, na=False, regex=False)].index
+    title_idx = data[data[title_col].str.lower().str.contains(record, na=False, regex=False)].index
 
+    # Ask user to select a best match if multiple results are found
     if len(title_idx) > 1:
         print("\nMultiple results found:")
         for idx, t_idx in enumerate(title_idx):
@@ -79,10 +79,10 @@ def cbf_recommend(top_k: int, filepath: str, record: str, title_col: str, featur
 
 
 def main():
-    filepath = "/Users/joeycherisea/Downloads/ml-latest/movies.csv"
-    record = input("One movie you have watched before: ").lower()
-    title_column = "title"
-    feature_column = "genres"
+    filepath = input("Movie Filepath: ")
+    record = input("One movie you have watched: ").lower()
+    title_column = input("Title Column: ")
+    feature_column = input("Feature Column: ")
     top_k = input("Number of Recommendations: ")
 
     # Measure execution time
@@ -91,6 +91,7 @@ def main():
                         title_column, feature_column)
     end_time = timeit.default_timer()
 
+    # Display results
     print(
         f"\n===================== Top {top_k} Recommendations Based on Your View History =====================")
     for i, t, s in res:
